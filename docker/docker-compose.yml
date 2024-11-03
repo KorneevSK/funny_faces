@@ -17,7 +17,7 @@ services:
       dockerfile: docker/Dockerfile.frontend
     container_name: googly_eyes_frontend
     ports:
-      - "8501:8501"
+      - "80:8501"
     depends_on:
       - backend
     networks:
