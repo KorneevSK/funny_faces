@@ -1,3 +1,4 @@
+from typing import Tuple
 from joblib import Parallel, delayed
 import cv2
 import numpy as np
@@ -11,7 +12,22 @@ eye_cascade = cv2.CascadeClassifier(
     cv2.data.haarcascades + 'haarcascade_eye.xml'
 )
 
-def process_eye(face_image, eye_coords):
+def process_eye(face_image: np.ndarray, eye_coords: Tuple) -> np.ndarray:
+    """
+    Processes an eye region in a face image by overlaying a googly eye.
+
+    Parameters
+    ----------------
+    face_image : numpy.ndarray
+        The image of the face in which the eye is to be processed.
+    eye_coords : tuple
+        A tuple containing the coordinates and size of the eye region (ex, ey, ew, eh).
+    
+    Returns
+    ----------------
+    numpy.ndarray
+        The face image with the googly eye overlay applied to the specified eye region.
+    """
     ex, ey, ew, eh = eye_coords
 
     # Create a googly eye with random size and pupil position
@@ -58,7 +74,25 @@ def process_eye(face_image, eye_coords):
 
     return face_image
 
-def process_face(open_cv_image, face_coords):
+def process_face(open_cv_image: np.ndarray, face_coords: Tuple) -> Tuple:
+    """
+    Processes a face in an image by extracting the face region, detecting eyes, 
+    and processing the eyes in parallel.
+
+    Parameters
+    ----------------
+    open_cv_image : numpy.ndarray
+        The input image in which the face is to be processed.
+    face_coords : tuple
+        A tuple (x, y, w, h) representing the coordinates and size of the face 
+        in the image.
+
+    Returns
+    ----------------
+    tuple
+        A tuple (x, y, w, h, face_image) where (x, y, w, h) are the coordinates 
+        and size of the face, and face_image is the processed face region.
+    """
     x, y, w, h = face_coords
 
     # Extract face region
@@ -84,11 +118,15 @@ def add_googly_eyes(image):
     Detects faces and eyes in an image and overlays googly eyes on each detected eye.
     Randomizes the size and position of pupils for added humor.
 
-    Parameters:
-    - image (PIL.Image): The input image in which googly eyes will be added.
+    Parameters
+    ----------------
+    image : PIL.Image
+        The input image in which googly eyes will be added.
 
-    Returns:
-    - PIL.Image: The image with googly eyes applied.
+    Returns
+    ----------------
+    PIL.Image
+        The image with googly eyes applied.
     """
     # Convert the PIL image to an OpenCV-compatible format
     open_cv_image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
